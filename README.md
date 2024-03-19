@@ -1,4 +1,4 @@
-# My Infrastructure as code repo [![built with garnix](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fgarnix.io%2Fapi%2Fbadges%2Fz3ji%2Finfra)](https://garnix.io)
+# My Infrastructure as Code repo [![built with garnix](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fgarnix.io%2Fapi%2Fbadges%2Fz3ji%2Finfra)](https://garnix.io)
 
 Modifications to the system are (or, at the very least, ought to be) recorded within this document.
 
