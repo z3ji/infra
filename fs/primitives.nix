@@ -1,4 +1,5 @@
 {
+  # Subvolume configurations
   root = {
     name = "@root";
     purpose = "This subvolume serves as the root filesystem.";
