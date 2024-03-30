@@ -24,7 +24,7 @@
   };
   swap = {
     name = "@swap";
-    purpose = "Subvolume for swap space";
+    purpose = "Subvolume for swap space.";
     backup = "None";
     mount = "/swap";
     compress = "no";
