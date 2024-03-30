@@ -29,54 +29,52 @@ in
       ROOT=/mnt
 
       # Loop over devices and perform setup
-      ${join "" (util.mapAttrsToList fs.devices (devName: devProps: let
-        dev = devProps.path;
-        subvols = devProps.subvols or [];
-        mounts = devProps.mounts or [];
+      ${join "" (util.mapKeys fs.order (devName: let
+        dev = fs.devices.${devName};
+        subvols = fs.subvols.${devName} or [];
       in ''
-        : "Setting up ${devName} (${dev})..."
+        : "Setting up ${devName} (${dev.path})..."
 
         # Mounting the device
-        MNT="/setup/${devName}/"
+        MNT=/setup/${devName}/
         mkdir -p "$MNT"
-        mount "${dev}" "$MNT"
+        mount ${dev.path} "$MNT"
 
         # Check for existing subvolumes
         : "Checking for existing subvolumes..."
         if compgen -G "$MNT/@*"; then
-            : "Some subvolumes already exist on ${devName} (${dev})."
+            : "Some subvolumes already exist on ${devName} (${dev.path})."
             : "Do you want to proceed? Existing subvolumes will be re-used."
             : "This might cause trouble if they're not compatible with the new config."
             read -p "[y/N] " -r
-            if [[ ! $REPLY =~ ^[Yy]$ ]]; then umount "$MNT"; exit 1; fi
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then umount $MNT; exit 1; fi
         fi
 
         # Create subvolumes
         : "Creating subvolumes..."
-        ${join "" (util.mapAttrsToList subvols (subName: subProps: ''
-          : "Creating subvolume ${subName} at ${subProps.mount} if it doesn't exist"
-          if [ ! -d "$MNT/${subName}" ]; then
-              btrfs subvolume create "$MNT/${subName}";
+        ${join "" (util.mapKeys subvols (sub: ''
+          : "Creating subvolume ${sub.name} at ${sub.mount} if it doesn't exist"
+          if [ ! -d "$MNT/${sub.name}" ]; then
+              btrfs subvolume create "$MNT/${sub.name}";
           else
-              : "Subvolume ${subName} already exists! Re-using it, if something fails here fix it manually."
+              : "Subvolume ${sub.name} already exists! Re-using it, if something fails here fix it manually."
           fi
-          ${join "" (util.mapAttrsToList (subProps.additional_mounts or []) (mount: ''
-            : "Mounting ${subName} at ${mount}"
+          ${join "" (util.mapKeys ([sub.mount] ++ (sub.additional_mounts or [])) (mount: ''
+            : "Mounting ${sub.name} at ${mount}"
             mkdir -p "$ROOT${mount}"
-            mount -o "subvol=${subName},noatime,compress=${subProps.compress}" "${dev}" "$ROOT${mount}"
+            mount -o "subvol=${sub.name},noatime,compress=${sub.compress}" ${dev.path} "$ROOT${mount}"
           ''))}
         ''))}
 
         # Unmount the temporary mount point
-        umount "$MNT"
+        umount $MNT
 
         # Mount additional paths
         : "Mounting additional paths..."
-        ${join "" (util.map (mount: ''
-            mkdir -p "$ROOT${mount}"
-            mount "${dev}" "$ROOT${mount}"
-          '')
-          mounts)}
+        ${join "" (util.mapKeys dev.mounts or [] (mount: ''
+          mkdir -p "$ROOT${mount}"
+          mount ${dev.path} "$ROOT${mount}"
+        ''))}
       ''))}
     '';
   }
