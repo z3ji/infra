@@ -16,12 +16,12 @@
   }:
     flake-utils.lib.eachDefaultSystem (system: let
       # Import the utility functions
-      util = (import ./overlays/util.nix {inherit system;}).util;
+       util = (import ./overlays/util.nix 0 0).util;
 
       # Import nixpkgs and apply overlays
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [(import ./overlays)];
+        overlays = util.nixFilesIn ./overlays;
       };
     in {
       # Define packages
