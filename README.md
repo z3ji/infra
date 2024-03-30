@@ -10,6 +10,7 @@ Disk formatting should be configured with `nix run .#fs_cli -- [host] apply`.
 
 # Hosts
 
-- `luna`: My laptop (i7-4558U, Iris 5100).
-- `nova`: My desktop (Ryzen 5 3600, RX 5700 XT)
+Replace `[host]` with one of the following:
+- `leda`: My laptop (i7-4558U, Iris 5100).
+- `dia`: My desktop (Ryzen 5 3600, RX 5700 XT)
 
