@@ -4,7 +4,7 @@ Modifications to the system are (or, at the very least, ought to be) recorded wi
 
 # File System structure
 
-See hosts/[host]/partitions.nix.
+See hosts/[host]/fs.nix.
 
 Disk formatting should be configured with `nix run .#fs_cli -- [host] apply`.
 
